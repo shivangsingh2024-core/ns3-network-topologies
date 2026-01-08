@@ -1,0 +1,28 @@
+#include "ns3/core-module.h"
+#include "ns3/network-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/netanim-module.h"
+
+using namespace ns3;
+
+int main () {
+    NodeContainer nodes;
+    nodes.Create(20);
+
+    InternetStackHelper internet;
+    internet.Install(nodes);
+
+    PointToPointHelper p2p;
+    p2p.SetDeviceAttribute("DataRate", StringValue("5Mbps"));
+    p2p.SetChannelAttribute("Delay", StringValue("2ms"));
+
+    for (int i = 1; i < 20; i++) {
+        p2p.Install(NodeContainer(nodes.Get(0), nodes.Get(i)));
+    }
+
+    AnimationInterface anim("star.xml");
+    Simulator::Run();
+    Simulator::Destroy();
+    return 0;
+}
